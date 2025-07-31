@@ -37,7 +37,7 @@ function App() {
     {
       title: "StimaSense",
       description: "Real-time electricity tracking for Kenyan households - stay informed on power status, outages, and patterns with a clean, responsive interface.",
-      tech: ["React", "Node.js", "MongoDB", "Real-time APIs"],
+      tech: ["Dart", "Flutter", "Material Design", "Real-time APIs"],
       github: "https://github.com/Themazecrawler",
       live: "#",
       image: "https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?auto=compress&cs=tinysrgb&w=500"
@@ -53,7 +53,7 @@ function App() {
     {
       title: "Bloom",
       description: "A dating app built by and for Black users centered on connection, safety, and real representation in love and community.",
-      tech: ["React Native", "Firebase", "Node.js", "Socket.io"],
+      tech: ["Dart", "Supabase", "FLutter", "Socket.io"],
       github: "https://github.com/Themazecrawler",
       live: "#",
       image: "https://images.pexels.com/photos/6962024/pexels-photo-6962024.jpeg?auto=compress&cs=tinysrgb&w=500"
