@@ -228,7 +228,7 @@ function App() {
                 During my internship, I gained valuable experience in IT support, data management, 
                 and auditing, which gave me a solid foundation in understanding how technology 
                 impacts business operations. This experience, combined with my academic background, 
-                has shaped my approach to development—always considering security, performance, 
+                has shaped my approach to development; always considering security, performance, 
                 and user experience.
               </p>
 
@@ -341,7 +341,7 @@ function App() {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-purple-600 to-pink-600 mx-auto mb-6"></div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              A showcase of applications I've built, demonstrating my technical skills and design sensibility
+              A showcase of the top applications I've built, demonstrating my technical skills and design sensibility
             </p>
           </div>
 
