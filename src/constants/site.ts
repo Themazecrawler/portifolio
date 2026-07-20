@@ -74,6 +74,46 @@ export const PROJECTS: Project[] = [
     image:
       'https://images.pexels.com/photos/6962024/pexels-photo-6962024.jpeg?auto=compress&cs=tinysrgb&w=500',
   },
+  {
+    title: 'WalletIO',
+    description:
+      'modern Web3 crypto wallet appt hat gives users a clear, real-time view of their digital assets.',
+    tech: ['React Native', 'Web3.js', 'Ethereum', 'Tailwind'],
+    github: SOCIAL_LINKS.github,
+    live: '#',
+    image:
+      'https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=500',
+  },
+  {
+    title: 'Hora',
+    description:
+      'A cross-platform menstrual cycle tracking application , featuring seasonal themed UI, privacy-first onboarding, cycle predictions, symptom tracking, and wellness insights.',
+    tech: ['Flutter', 'Dart', 'Node.js', 'PostgreSQL'],
+    github: SOCIAL_LINKS.github,
+    live: '#',
+    image:
+      'https://images.pexels.com/photos/6801874/pexels-photo-6801874.jpeg?auto=compress&cs=tinysrgb&w=500',
+  },
+  {
+    title: 'SACE',
+    description:
+      'AI-Powered Style Suggestion Platform',
+    tech: ['React', 'Python', 'TensorFlow', 'FastAPI'],
+    github: SOCIAL_LINKS.github,
+    live: '#',
+    image:
+      'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=500',
+  },
+  {
+    title: 'HMS',
+    description:
+      'a hotel management system platform that is highly customizable.',
+    tech: ['React', 'Node.js', 'Express', 'MongoDB'],
+    github: SOCIAL_LINKS.github,
+    live: '#',
+    image:
+      'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=500',
+  },
 ];
 
 export type SkillCategory = {
@@ -122,27 +162,51 @@ export type ExperienceItem = {
 
 export const EXPERIENCES: ExperienceItem[] = [
   {
-    role: 'IT Support Intern',
-    organization: 'Internship',
-    period: 'Past',
+    role: 'Freelance Web Developer',
+    organization: 'Upwork',
+    period: '01/2023 - Present',
     description:
-      'Gained valuable hands-on experience in IT support, data management, and auditing, building a solid foundation in how technology impacts business operations.',
+      'Designing and developing custom static and dynamic websites for diverse clients, focusing on responsive design, modern performance, and seamless user experiences.',
     highlights: [
-      'IT support & troubleshooting',
-      'Data management',
-      'Systems auditing',
+      'Built custom mobile-responsive portfolio sites using modern HTML, CSS, and JS.',
+      'Integrated PHP/MySQL for dynamic data management and user forms.',
+      'Delivered end-to-end web solutions directly to local clients.',
     ],
   },
   {
-    role: 'Fullstack & Mobile Developer',
-    organization: 'Personal & Client Projects',
-    period: 'Current',
+    role: 'Software Engineering AI Evaluator',
+    organization: 'Habitat Code',
+    period: '11/2025 - 04/2026',
     description:
-      'Building production-ready web and mobile applications spanning fullstack development, mobile platforms, and security-first design.',
+      'Evaluated AI-generated code implementations across frontend, backend, and infrastructure tasks to ensure correctness, functionality, and adherence to modern software engineering standards.',
     highlights: [
-      'Flutter & React Native apps',
-      'React + Node.js web apps',
-      'Security-first implementation',
+      'Reviewed code patches, PRs, and Git diffs to identify bugs and potential regressions.',
+      'Analyzed software test suites to validate expected behavior and test coverage.',
+      'Provided structured technical feedback on logic, compatibility, and best practices.',
+    ],
+  },
+  {
+    role: 'Full-stack Developer Intern',
+    organization: 'Vislona',
+    period: '08/2025 - 12/2025',
+    description:
+      'Developed responsive web applications using HTML, CSS, JavaScript, React, and Node.js. Collaborated cross-functionally to design, build, and deploy full-stack features.',
+    highlights: [
+      'Built responsive React frontends integrated with Node.js backends.',
+      'Troubleshot application issues and optimized UI/UX design principles.',
+      'Researched and adopted modern web development practices to improve performance.',
+    ],
+  },
+  {
+    role: 'IT Intern & Technical Trainer',
+    organization: 'LVCT HEALTH',
+    period: '06/2024 - 08/2024',
+    description:
+      'Managed IT operations and delivered technical support, culminating in being nominated as a technical trainer for a youth hackathon centered around mobile application development.',
+    highlights: [
+      'Served as a technical trainer for a mobile app development youth hackathon.',
+      'Conducted IT audits and implemented solutions to improve system performance.',
+      'Managed and organized data ensuring accuracy and efficient accessibility.',
     ],
   },
 ];

@@ -7,17 +7,20 @@ import {
   Projects,
   Experience,
   Contact,
+  ScrollPath,
 } from './components/sections';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black">
       <Navigation />
 
       <main>
         <Hero />
-        <About />
-        <Skills />
+        <ScrollPath>
+          <About />
+          <Skills />
+        </ScrollPath>
         <Projects />
         <Experience />
         <Contact />

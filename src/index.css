@@ -5,6 +5,17 @@
 @layer base {
   body {
     font-family: 'Inter', sans-serif;
+    background-color: black;
+    overflow-x: hidden;
+  }
+  html, body, * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    display: none;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Syne', sans-serif;

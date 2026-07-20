@@ -1,0 +1,70 @@
+.bento-section {
+  position: relative;
+}
+
+.magic-bento-card {
+  position: relative;
+  background-color: #111827; /* Tailwind gray-900 */
+  border-radius: 1rem; /* match rounded-2xl */
+  overflow: hidden;
+  --glow-intensity: 0;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-color: 236, 72, 153; /* pink-500 */
+  --glow-radius: 400px;
+  border: 1px solid #1f2937; /* gray-800 */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
+}
+
+/* Base border glow effect using mask composite */
+.magic-bento-card--border-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px; /* border thickness */
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(var(--glow-color), var(--glow-intensity)),
+    transparent 40%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Inner glow for the background when spotlight hits */
+.magic-bento-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    calc(var(--glow-radius) * 0.8) circle at var(--glow-x) var(--glow-y),
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.1)),
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Particle animation wrapper */
+.particle-container {
+  overflow: hidden;
+}
+
+/* Content needs to be above the glow but below the particles */
+.magic-bento-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Spotlight that follows the mouse across the entire section */
+.global-spotlight {
+  position: fixed;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
