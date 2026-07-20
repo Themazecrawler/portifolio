@@ -67,7 +67,7 @@ export function Footer() {
             Lisa Amimo
           </div>
           <p className="text-gray-400 mb-6">
-            Computer Science Graduate &bull; Fullstack Developer &bull; Cybersecurity Enthusiast
+            Computer Science Graduate &bull; Fullstack Developer &bull; Code Enthusiast
           </p>
           <div className="flex justify-center space-x-6 mb-8">
             <a
