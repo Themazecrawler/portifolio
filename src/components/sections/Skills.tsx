@@ -5,11 +5,11 @@ export function Skills() {
         <h2 className="text-4xl md:text-5xl font-bold mb-6">
           What I Do
         </h2>
-        <p className="font-inter text-xl md:text-2xl lg:text-3xl text-gray-700 leading-relaxed mb-6">
+        <p className="font-inter text-xl md:text-2xl lg:text-3xl text-gray-700 leading-relaxed mb-6 max-w-2xl">
           I specialize in creating comprehensive digital solutions across multiple
           platforms and technologies
         </p>
-        <ul className="font-inter text-xl md:text-2xl text-gray-700 leading-relaxed space-y-2">
+        <ul className="font-inter text-xl md:text-2xl text-gray-700 leading-relaxed space-y-2 list-disc pl-6 max-w-2xl">
           <li>Mobile development - Building responsive, high-performance mobile applications
             for Android and iOS with a focus on intuitive user experiences.</li>
           <li>Frontend development  - Creating modern, interactive user interfaces that are
