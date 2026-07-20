@@ -89,9 +89,9 @@ export function Projects() {
         onUpdate: render,
         scrollTrigger: {
           trigger: transitionRef.current,
-          start: 'top 85%',
+          start: 'top 95%',
           end: 'bottom top',
-          scrub: 1, // Smoothly link wave progression to scroll position
+          scrub: true, // true binds exactly 1:1 with scroll position to remove lag
         },
       });
 
