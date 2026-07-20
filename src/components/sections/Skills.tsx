@@ -10,9 +10,12 @@ export function Skills() {
           platforms and technologies
         </p>
         <ul className="font-inter text-xl md:text-2xl text-gray-700 leading-relaxed space-y-2">
-          <li>Mobile development - Building responsive, high-performance mobile applications for Android and iOS with a focus on intuitive user experiences.</li>
-          <li>Frontend development  - Creating modern, interactive user interfaces that are visually appealing, responsive, and optimized for usability</li>
-          <li>Web development - Developing fast, scalable websites and web applications using modern technologies and best practices.</li>
+          <li>Mobile development - Building responsive, high-performance mobile applications
+            for Android and iOS with a focus on intuitive user experiences.</li>
+          <li>Frontend development  - Creating modern, interactive user interfaces that are
+            visually appealing, responsive, and optimized for usability</li>
+          <li>Web development - Developing fast, scalable websites and web applications
+            using modern technologies and best practices.</li>
         </ul>
       </div>
     </section>
