@@ -1,23 +1,140 @@
+/* Self-hosted fonts (never link Google Fonts at runtime) — @import must
+   precede all other statements, including @tailwind, per the CSS spec. */
+@import '@fontsource/syne/600.css';
+@import '@fontsource/syne/700.css';
+@import '@fontsource/syne/800.css';
+@import '@fontsource/plus-jakarta-sans/400.css';
+@import '@fontsource/plus-jakarta-sans/500.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/pixelify-sans/500.css';
+@import '@fontsource/pixelify-sans/600.css';
+@import '@fontsource/pixelify-sans/700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Brand palette — single source of truth ────────────────────────────────
+   Duotone retro-arcade palette: hot pink stays the primary brand color
+   (already threaded through the whole site), paired with a mint "pop"
+   accent for the second voice pixel/retro palettes lean on. Re-theme the
+   whole site by editing these variables. */
+:root {
+  /* Primary — pink */
+  --color-accent: #EC4899;
+  --color-accent-dark: #be185d;
+  --color-accent-deep: #831843;
+  --color-accent-light: #fbcfe8;
+  --color-accent-soft: #f9a8d4;
+  --color-accent-rgb: 236, 72, 153;
+  --color-accent-dark-rgb: 190, 24, 93;
+  --color-accent-soft-rgb: 249, 168, 212;
+
+  /* Secondary — mint pop (arcade duotone partner) */
+  --color-pop: #6EF0B4;
+  --color-pop-dark: #22b878;
+  --color-pop-light: #c3fce0;
+  --color-pop-rgb: 110, 240, 180;
+
+  /* Neutrals — off-black with a whisper of the brand hue, never pure #000 */
+  --color-bg: #0c0810;
+  --color-surface: #16101c;
+  --color-surface-raised: #1e1626;
+  --color-ink: #030203;       /* used for hard offset shadows + outlines */
+  --color-border: #34293d;
+  --color-text: #f4eef7;
+  --color-text-muted: #b6a9c2;
+  --color-text-faint: #7c6d89;
+
+  /* Shape system (documented + applied everywhere, per Shape Consistency Lock):
+     buttons/pills = --radius-chunky, cards = --radius-card, inputs = --radius-input */
+  --radius-chunky: 10px;
+  --radius-card: 14px;
+  --radius-input: 8px;
+
+  /* Hard offset shadow — the retro "pressable button" device, replaces glow */
+  --shadow-offset: 4px;
+}
+
+/* Honor reduced-motion: collapse CSS animations/transitions (JS-driven
+   animation loops are gated individually via useReducedMotion). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer base {
   body {
-    font-family: 'Inter', sans-serif;
-    background-color: black;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
     overflow-x: hidden;
-  }
-  html, body, * {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar,
-  *::-webkit-scrollbar {
-    display: none;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Syne', sans-serif;
+  }
+
+  /* Thin styled scrollbar instead of hiding it outright — keeps the scroll
+     affordance without the default chrome clashing with the dark theme. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border: 2px solid var(--color-bg);
+    border-radius: 999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-accent-dark);
+  }
+}
+
+@layer utilities {
+  /* Retro pixel chrome — nav wordmark, eyebrows, badges, button labels.
+     Never used for body copy or long strings (unreadable at length). */
+  .font-pixel {
+    font-family: 'Pixelify Sans', 'Syne', sans-serif;
+  }
+
+
+  /* Hard offset "pressable" shadow, the retro alternative to blurred glow.
+     Pair with .press-active for the physical press-down interaction. */
+  .shadow-hard {
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--color-ink);
+  }
+  .shadow-hard-pop {
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--color-pop-dark);
+  }
+  .press-active {
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .press-active:active {
+    transform: translate(var(--shadow-offset), var(--shadow-offset));
+    box-shadow: 0 0 0 0 var(--color-ink);
+  }
+
+  /* Star twinkle for the Contact voxel scene — opacity only, so it composites
+     without layout or paint work. */
+  .pixel-star {
+    animation: pixel-star-twinkle 4s ease-in-out infinite;
+  }
+  @keyframes pixel-star-twinkle {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 0.9; }
   }
 }

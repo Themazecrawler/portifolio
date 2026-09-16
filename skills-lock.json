@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "pixel-art": {
+      "source": "nousresearch/hermes-agent",
+      "sourceType": "github",
+      "skillPath": "optional-skills/creative/pixel-art/SKILL.md",
+      "computedHash": "90e9748c1801bf14ca389efd18c76ce98c5e7951f9a88c28135464dc89540124"
+    }
+  }
+}

@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText as GSAPSplitText } from 'gsap/SplitText';
 import { useGSAP } from '@gsap/react';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
 
@@ -43,6 +44,7 @@ const SplitText: React.FC<SplitTextProps> = ({
   const animationCompletedRef = useRef(false);
   const onCompleteRef = useRef(onLetterAnimationComplete);
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
+  const reducedMotion = useReducedMotion();
 
   // Keep callback ref updated
   useEffect(() => {
@@ -61,7 +63,7 @@ const SplitText: React.FC<SplitTextProps> = ({
 
   useGSAP(
     () => {
-      if (!ref.current || !text || !fontsLoaded) return;
+      if (!ref.current || !text || !fontsLoaded || reducedMotion) return;
       // Prevent re-animation if already completed
       if (animationCompletedRef.current) return;
       const el = ref.current as HTMLElement & {
@@ -159,7 +161,8 @@ const SplitText: React.FC<SplitTextProps> = ({
         threshold,
         rootMargin,
         once,
-        fontsLoaded
+        fontsLoaded,
+        reducedMotion
       ],
       scope: ref
     }

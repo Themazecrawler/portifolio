@@ -1,17 +1,21 @@
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { GithubLogo, LinkedinLogo, EnvelopeSimple } from '@phosphor-icons/react';
 import { useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { SOCIAL_LINKS } from '../../constants/site';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+  const reducedMotion = useReducedMotion();
 
   useGSAP(() => {
+    // Reduced motion: keep the elastic SVG bend at its flat resting state.
+    if (reducedMotion) return;
     const path = pathRef.current;
     if (!path) return;
 
@@ -41,16 +45,16 @@ export function Footer() {
         });
       },
     });
-  });
+  }, { dependencies: [reducedMotion] });
 
   return (
-    <footer ref={footerRef} className="relative bg-black pt-48 pb-12 mt-32">
+    <footer ref={footerRef} className="relative bg-bg pt-48 pb-12">
       {/* Expanded Elastic SVG Top Border */}
       <svg
         viewBox="0 0 100 200"
         preserveAspectRatio="none"
         className="absolute top-0 left-0 w-full h-48 pointer-events-none"
-        style={{ fill: '#111827', overflow: 'visible' }}
+        style={{ fill: 'var(--color-surface)', overflow: 'visible' }}
       >
         <path
           ref={pathRef}
@@ -59,42 +63,42 @@ export function Footer() {
       </svg>
 
       {/* Main Footer Background */}
-      <div className="absolute inset-0 top-[6rem] bg-gray-900 z-0"></div>
+      <div className="absolute inset-0 top-[6rem] bg-surface z-0 border-t-2 border-border"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <div className="text-2xl font-bold text-[#EC4899] mb-4">
-            Lisa Amimo
+          <div className="font-pixel text-lg text-accent mb-4">
+            LISA.AMIMO
           </div>
-          <p className="text-gray-400 mb-6">
+          <p className="text-text-muted mb-6">
             Computer Science Graduate &bull; Fullstack Developer &bull; Cybersecurity Enthusiast
           </p>
-          <div className="flex justify-center space-x-6 mb-8">
+          <div className="flex justify-center gap-4 mb-8">
             <a
               href={SOCIAL_LINKS.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-pink-500 transition-colors duration-200"
+              className="p-3 bg-surface-raised border-2 border-border rounded-chunky hover:border-accent transition-colors duration-200 text-text-muted hover:text-accent"
             >
-              <Github className="w-6 h-6" />
+              <GithubLogo className="w-5 h-5" weight="bold" />
             </a>
             <a
               href={SOCIAL_LINKS.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-pink-500 transition-colors duration-200"
+              className="p-3 bg-surface-raised border-2 border-border rounded-chunky hover:border-accent transition-colors duration-200 text-text-muted hover:text-accent"
             >
-              <Linkedin className="w-6 h-6" />
+              <LinkedinLogo className="w-5 h-5" weight="bold" />
             </a>
             <a
               href={SOCIAL_LINKS.email}
-              className="text-gray-400 hover:text-pink-500 transition-colors duration-200"
+              className="p-3 bg-surface-raised border-2 border-border rounded-chunky hover:border-accent transition-colors duration-200 text-text-muted hover:text-accent"
             >
-              <Mail className="w-6 h-6" />
+              <EnvelopeSimple className="w-5 h-5" weight="bold" />
             </a>
           </div>
-          <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Lisa Amimo. Built with React &amp; GSAP.
+          <p className="text-text-faint text-sm">
+            &copy; {new Date().getFullYear()} Lisa Amimo. All rights reserved.
           </p>
         </div>
       </div>

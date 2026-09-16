@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
+import { resolveCssVars } from '../../utils/cssVars';
 import './Grainient.css';
 
 interface GrainientProps {
@@ -25,6 +26,13 @@ interface GrainientProps {
   color1?: string;
   color2?: string;
   color3?: string;
+  /** Retro dithered-gradient look: number of visible color steps per channel
+   *  (e.g. 5-6 reads as an 8-bit dithered sky instead of a smooth blur).
+   *  0 disables posterize/dither and falls back to a smooth gradient. */
+  ditherLevels?: number;
+  /** Pixel size (in screen px) of the ordered-dither Bayer cell. Larger =
+   *  chunkier, more visibly "retro". */
+  ditherScale?: number;
   className?: string;
 }
 
@@ -66,11 +74,32 @@ uniform float uZoom;
 uniform vec3 uColor1;
 uniform vec3 uColor2;
 uniform vec3 uColor3;
+uniform float uDitherLevels;
+uniform float uDitherScale;
 out vec4 fragColor;
 #define S(a,b,t) smoothstep(a,b,t)
-mat2 Rot(float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c);} 
-vec2 hash(vec2 p){p=vec2(dot(p,vec2(2127.1,81.17)),dot(p,vec2(1269.5,283.37)));return fract(sin(p)*43758.5453);} 
+mat2 Rot(float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c);}
+vec2 hash(vec2 p){p=vec2(dot(p,vec2(2127.1,81.17)),dot(p,vec2(1269.5,283.37)));return fract(sin(p)*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.0-2.0*f);float n=mix(mix(dot(-1.0+2.0*hash(i+vec2(0.0,0.0)),f-vec2(0.0,0.0)),dot(-1.0+2.0*hash(i+vec2(1.0,0.0)),f-vec2(1.0,0.0)),u.x),mix(dot(-1.0+2.0*hash(i+vec2(0.0,1.0)),f-vec2(0.0,1.0)),dot(-1.0+2.0*hash(i+vec2(1.0,1.0)),f-vec2(1.0,1.0)),u.x),u.y);return 0.5+0.5*n;}
+// 4x4 ordered (Bayer) dither matrix — the classic retro/8-bit technique for
+// faking more color depth out of fewer visible steps.
+float bayer4x4(vec2 p){
+  int x=int(mod(p.x,4.0));
+  int y=int(mod(p.y,4.0));
+  int idx=y*4+x;
+  float m[16];
+  m[0]=0.0;m[1]=8.0;m[2]=2.0;m[3]=10.0;
+  m[4]=12.0;m[5]=4.0;m[6]=14.0;m[7]=6.0;
+  m[8]=3.0;m[9]=11.0;m[10]=1.0;m[11]=9.0;
+  m[12]=15.0;m[13]=7.0;m[14]=13.0;m[15]=5.0;
+  return m[idx]/16.0;
+}
+vec3 ditherPosterize(vec3 col, vec2 fragCoord, float levels, float cellScale){
+  if(levels<=0.0) return col;
+  float threshold=bayer4x4(floor(fragCoord/max(cellScale,1.0)))-0.5;
+  vec3 stepped=col*levels+threshold;
+  return floor(stepped)/levels;
+}
 void mainImage(out vec4 o, vec2 C){
   float t=iTime*uTimeSpeed;
   vec2 uv=C/iResolution.xy;
@@ -115,6 +144,7 @@ void mainImage(out vec4 o, vec2 C){
   col=mix(vec3(luma),col,uSaturation);
   col=pow(max(col,0.0),vec3(1.0/max(uGamma,0.001)));
   col=clamp(col,0.0,1.0);
+  col=ditherPosterize(col,C,uDitherLevels,uDitherScale);
 
   o=vec4(col,1.0);
 }
@@ -155,6 +185,8 @@ const Grainient: React.FC<GrainientProps> = ({
   color1 = '#FF9FFC',
   color2 = '#5227FF',
   color3 = '#B497CF',
+  ditherLevels = 6,
+  ditherScale = 3,
   className = ''
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -204,7 +236,9 @@ const Grainient: React.FC<GrainientProps> = ({
         uZoom:           { value: 0.9 },
         uColor1:         { value: new Float32Array([1, 1, 1]) },
         uColor2:         { value: new Float32Array([1, 1, 1]) },
-        uColor3:         { value: new Float32Array([1, 1, 1]) }
+        uColor3:         { value: new Float32Array([1, 1, 1]) },
+        uDitherLevels:   { value: 6 },
+        uDitherScale:    { value: 3 }
       }
     });
 
@@ -227,8 +261,6 @@ const Grainient: React.FC<GrainientProps> = ({
     setSize();
 
     let raf = 0;
-    let isVisible = true;
-    let isPageVisible = !document.hidden;
     const t0 = performance.now();
 
     const loop = (t: number) => {
@@ -237,32 +269,47 @@ const Grainient: React.FC<GrainientProps> = ({
       raf = requestAnimationFrame(loop);
     };
 
-    const tryStart = () => {
-      if (isVisible && isPageVisible && raf === 0) raf = requestAnimationFrame(loop);
-    };
-    const tryStop = () => {
-      if (raf !== 0) { cancelAnimationFrame(raf); raf = 0; }
-    };
+    // Under reduced motion: the static frame rendered by setSize() stays on
+    // screen (ResizeObserver keeps it sized), but no animation loop or
+    // visibility machinery is attached.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const io = new IntersectionObserver(
-      ([entry]) => { isVisible = entry.isIntersecting; isVisible ? tryStart() : tryStop(); },
-      { threshold: 0 }
-    );
-    io.observe(container);
+    let io: IntersectionObserver | null = null;
+    let onVisibility: (() => void) | null = null;
 
-    const onVisibility = () => {
-      isPageVisible = !document.hidden;
-      isPageVisible ? tryStart() : tryStop();
-    };
-    document.addEventListener('visibilitychange', onVisibility);
+    if (!reduceMotion) {
+      let isVisible = true;
+      let isPageVisible = !document.hidden;
+      const tryStart = () => {
+        if (isVisible && isPageVisible && raf === 0) raf = requestAnimationFrame(loop);
+      };
+      const tryStop = () => {
+        if (raf !== 0) { cancelAnimationFrame(raf); raf = 0; }
+      };
 
-    tryStart();
+      io = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting;
+          if (isVisible) tryStart(); else tryStop();
+        },
+        { threshold: 0 }
+      );
+      io.observe(container);
+
+      onVisibility = () => {
+        isPageVisible = !document.hidden;
+        if (isPageVisible) tryStart(); else tryStop();
+      };
+      document.addEventListener('visibilitychange', onVisibility);
+
+      tryStart();
+    }
 
     return () => {
-      tryStop();
+      if (raf !== 0) cancelAnimationFrame(raf);
       ro.disconnect();
-      io.disconnect();
-      document.removeEventListener('visibilitychange', onVisibility);
+      io?.disconnect();
+      if (onVisibility) document.removeEventListener('visibilitychange', onVisibility);
       ctxMap.delete(container);
       try { container.removeChild(canvas); } catch { /* ignore */ }
     };
@@ -274,7 +321,7 @@ const Grainient: React.FC<GrainientProps> = ({
     const ctx = ctxMap.get(container);
     if (!ctx) return;
     const { program } = ctx;
-    const u = program.uniforms as Record<string, { value: any }>;
+    const u = program.uniforms as Record<string, { value: unknown }>;
 
     u.uTimeSpeed.value      = timeSpeed;
     u.uColorBalance.value   = colorBalance;
@@ -294,14 +341,16 @@ const Grainient: React.FC<GrainientProps> = ({
     u.uSaturation.value     = saturation;
     u.uCenterOffset.value   = new Float32Array([centerX, centerY]);
     u.uZoom.value           = zoom;
-    u.uColor1.value         = new Float32Array(hexToRgb(color1));
-    u.uColor2.value         = new Float32Array(hexToRgb(color2));
-    u.uColor3.value         = new Float32Array(hexToRgb(color3));
+    u.uColor1.value         = new Float32Array(hexToRgb(resolveCssVars(color1)));
+    u.uColor2.value         = new Float32Array(hexToRgb(resolveCssVars(color2)));
+    u.uColor3.value         = new Float32Array(hexToRgb(resolveCssVars(color3)));
+    u.uDitherLevels.value   = ditherLevels;
+    u.uDitherScale.value    = ditherScale;
   }, [
     timeSpeed, colorBalance, warpStrength, warpFrequency, warpSpeed,
     warpAmplitude, blendAngle, blendSoftness, rotationAmount, noiseScale,
     grainAmount, grainScale, grainAnimated, contrast, gamma, saturation,
-    centerX, centerY, zoom, color1, color2, color3
+    centerX, centerY, zoom, color1, color2, color3, ditherLevels, ditherScale
   ]);
 
   return <div ref={containerRef} className={`grainient-container ${className}`.trim()} />;

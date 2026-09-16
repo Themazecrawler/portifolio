@@ -17,7 +17,7 @@ export interface BentoProps {
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 400;
-const DEFAULT_GLOW_COLOR = '236, 72, 153'; // Theme Pink #EC4899
+const DEFAULT_GLOW_COLOR = 'var(--color-accent-rgb)'; // Theme accent (see src/index.css)
 const MOBILE_BREAKPOINT = 768;
 
 const createParticleElement = (x: number, y: number, color: string = DEFAULT_GLOW_COLOR): HTMLDivElement => {
@@ -97,6 +97,8 @@ export const MagicCard: React.FC<{
     timeoutsRef.current = [];
 
     particlesRef.current.forEach(particle => {
+      // Kill the infinite drift/pulse tweens so they don't keep ticking on detached nodes
+      gsap.killTweensOf(particle);
       gsap.to(particle, {
         scale: 0,
         opacity: 0,

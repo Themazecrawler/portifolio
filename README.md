@@ -1,20 +1,45 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Lisa Amimo — Portfolio
 
-# Run and deploy your AI Studio app
+Personal portfolio site: home, about, skills, projects, experience, and contact
+sections in a pixel/retro-arcade style (hard offset shadows, dithered
+gradients, pink + mint duotone palette).
 
-This contains everything you need to run your app locally.
+## Stack
 
-View your app in AI Studio: https://ai.studio/apps/dcc93b52-b594-46a4-a88b-c2665ab7c945
+- React 18 + TypeScript, built with Vite
+- Tailwind CSS
+- GSAP (`@gsap/react`) for scroll-driven animation
+- OGL for the WebGL dithered-gradient backgrounds
+- Phosphor Icons
+- Fonts self-hosted via Fontsource (Syne, Plus Jakarta Sans, Pixelify Sans)
 
-## Run Locally
+## Project structure
 
-**Prerequisites:**  Node.js
+- `src/components/sections/` — one component per page section (Hero, About,
+  Skills, Projects, Experience, Contact)
+- `src/components/reactbits/` — reusable visual components (dot-matrix field,
+  dithered gradient background, tilting profile card, bento cards, scroll
+  text reveal, the Minecraft-style pixel scene)
+- `src/constants/site.ts` — site copy, project list, experience history,
+  contact links
+- `src/hooks/` — small shared hooks (reduced-motion, active-section tracking)
 
+## Running locally
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+**Prerequisites:** Node.js
+
+```
+npm install
+npm run dev
+```
+
+Other scripts:
+
+```
+npm run build     # production build
+npm run preview   # preview the production build locally
+npm run lint       # eslint
+```
+
+No environment variables or API keys are required. The contact form opens
+the visitor's email client via a `mailto:` link rather than calling a backend.

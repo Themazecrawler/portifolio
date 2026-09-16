@@ -10,12 +10,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  optimizeDeps: {
-    exclude: ['lucide-react'],
-  },
   server: {
     host: '0.0.0.0',
     port: 3000,
     allowedHosts: 'all',
+    watch: {
+      // Tool-managed directories (Claude Code skills, Playwright MCP's own
+      // workspace, freebuff) get written to outside of any build step and
+      // have caused EBUSY crashes on Windows when Vite tries to watch them.
+      ignored: ['**/.claude/**', '**/.playwright-mcp/**', '**/.freebuff/**'],
+    },
   },
 });

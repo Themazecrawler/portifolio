@@ -6,6 +6,16 @@
         "shadcn@latest",
         "mcp"
       ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "figma": {
+      "serverUrl": "https://mcp.figma.com/mcp"
     }
   }
 }

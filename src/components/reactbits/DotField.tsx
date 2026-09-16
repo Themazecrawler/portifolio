@@ -1,4 +1,5 @@
 import { useEffect, useRef, memo } from 'react';
+import { resolveCssVars } from '../../utils/cssVars';
 import './DotField.css';
 
 const TWO_PI = Math.PI * 2;
@@ -27,6 +28,9 @@ interface DotFieldProps {
   gradientFrom?: string;
   gradientTo?: string;
   glowColor?: string;
+  /** 'square' reads as a literal pixel/dot-matrix grid instead of a soft
+   *  particle field — the retro-friendly variant. */
+  dotShape?: 'circle' | 'square';
   [key: string]: unknown;
 }
 
@@ -43,6 +47,7 @@ const DotField = memo(({
   gradientFrom = 'rgba(168, 85, 247, 0.35)',
   gradientTo = 'rgba(180, 151, 207, 0.25)',
   glowColor = '#120F17',
+  dotShape = 'circle',
   ...rest
 }: DotFieldProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -55,7 +60,7 @@ const DotField = memo(({
   const glowOpacity = useRef(0);
   const engagement = useRef(0);
   const propsRef = useRef<Record<string, unknown>>({});
-  propsRef.current = { dotRadius, dotSpacing, cursorRadius, cursorForce, bulgeOnly, bulgeStrength, sparkle, waveAmplitude, gradientFrom, gradientTo };
+  propsRef.current = { dotRadius, dotSpacing, cursorRadius, cursorForce, bulgeOnly, bulgeStrength, sparkle, waveAmplitude, gradientFrom, gradientTo, dotShape };
   const rebuildRef = useRef<(() => void) | null>(null);
   const glowIdRef = useRef(`dot-field-glow-${Math.random().toString(36).slice(2, 9)}`);
 
@@ -72,6 +77,11 @@ const DotField = memo(({
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(doResize, 100);
     }
+
+    // Canvas fillStyle can't resolve CSS custom properties, so resolve any
+    // var() references in the color props once, before the render loop starts.
+    propsRef.current.gradientFrom = resolveCssVars(propsRef.current.gradientFrom as string);
+    propsRef.current.gradientTo = resolveCssVars(propsRef.current.gradientTo as string);
 
     function doResize() {
       const rect = canvas!.parentElement!.getBoundingClientRect();
@@ -92,6 +102,7 @@ const DotField = memo(({
       };
 
       buildDots(w, h);
+      if (staticMode) render();
     }
 
     function buildDots(w: number, h: number) {
@@ -131,11 +142,11 @@ const DotField = memo(({
       m.prevY = m.y;
     }
 
-    const speedInterval = setInterval(updateMouseSpeed, 20);
+    let staticMode = false; // when true, render one frame and never animate
 
     let frameCount = 0;
 
-    function tick() {
+    function render() {
       frameCount++;
       const dots = dotsRef.current;
       const m = mouseRef.current;
@@ -212,44 +223,94 @@ const DotField = memo(({
           drawX += Math.cos(d.ay * 0.03 + t * 0.7) * (p.waveAmplitude as number) * 0.5;
         }
 
+        const isSquare = p.dotShape === 'square';
+        let r = rad;
         if (p.sparkle) {
           const hash = ((i * 2654435761) ^ (frameCount >> 3)) >>> 0;
-          if ((hash % 100) < 3) {
-            ctx!.moveTo(drawX + rad * 1.8, drawY);
-            ctx!.arc(drawX, drawY, rad * 1.8, 0, TWO_PI);
-          } else {
-            ctx!.moveTo(drawX + rad, drawY);
-            ctx!.arc(drawX, drawY, rad, 0, TWO_PI);
-          }
+          if ((hash % 100) < 3) r = rad * 1.8;
+        }
+
+        if (isSquare) {
+          ctx!.rect(drawX - r, drawY - r, r * 2, r * 2);
         } else {
-          ctx!.moveTo(drawX + rad, drawY);
-          ctx!.arc(drawX, drawY, rad, 0, TWO_PI);
+          ctx!.moveTo(drawX + r, drawY);
+          ctx!.arc(drawX, drawY, r, 0, TWO_PI);
         }
       }
 
       ctx!.fill();
+    }
 
+    function tick() {
+      render();
       rafRef.current = requestAnimationFrame(tick);
     }
 
-    doResize();
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', onMouseMove, { passive: true });
-    rafRef.current = requestAnimationFrame(tick);
+    // Honor reduced motion: draw a single static frame, no loop, no pointer effects.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    staticMode = reduceMotion;
 
-    rebuildRef.current = () => {
-      const { w, h } = sizeRef.current;
-      if (w > 0 && h > 0) buildDots(w, h);
-    };
+    let io: IntersectionObserver | null = null;
+    let onVisibility: (() => void) | null = null;
+    let speedInterval: ReturnType<typeof setInterval> | null = null;
 
-    return () => {
+    const cleanup = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      clearInterval(speedInterval);
+      if (speedInterval) clearInterval(speedInterval);
       clearTimeout(resizeTimer);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
+      io?.disconnect();
+      if (onVisibility) document.removeEventListener('visibilitychange', onVisibility);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    window.addEventListener('resize', resize);
+    doResize(); // draws the static frame when staticMode is on
+
+    if (!reduceMotion) {
+      speedInterval = setInterval(updateMouseSpeed, 20);
+      window.addEventListener('mousemove', onMouseMove, { passive: true });
+      rafRef.current = requestAnimationFrame(tick);
+
+      // Pause the render loop whenever the canvas leaves the viewport or the
+      // tab is hidden (same visibility pattern as Grainient).
+      let isVisible = true;
+      let isPageVisible = !document.hidden;
+      const tryStart = () => {
+        if (isVisible && isPageVisible && rafRef.current === null) {
+          rafRef.current = requestAnimationFrame(tick);
+        }
+      };
+      const tryStop = () => {
+        if (rafRef.current !== null) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = null;
+        }
+      };
+      io = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting;
+          if (isVisible) tryStart(); else tryStop();
+        },
+        { threshold: 0 }
+      );
+      io.observe(canvas);
+      onVisibility = () => {
+        isPageVisible = !document.hidden;
+        if (isPageVisible) tryStart(); else tryStop();
+      };
+      document.addEventListener('visibilitychange', onVisibility);
+    }
+
+    rebuildRef.current = () => {
+      const { w, h } = sizeRef.current;
+      if (w > 0 && h > 0) {
+        buildDots(w, h);
+        if (staticMode) render();
+      }
+    };
+
+    return cleanup;
   }, []);
 
   useEffect(() => {
@@ -279,7 +340,8 @@ const DotField = memo(({
       >
         <defs>
           <radialGradient id={glowIdRef.current}>
-            <stop offset="0%" stopColor={glowColor} />
+            {/* style (CSS) so var(--...) brand tokens resolve at paint time */}
+            <stop offset="0%" style={{ stopColor: glowColor }} />
             <stop offset="100%" stopColor="transparent" />
           </radialGradient>
         </defs>

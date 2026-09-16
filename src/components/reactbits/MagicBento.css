@@ -4,16 +4,16 @@
 
 .magic-bento-card {
   position: relative;
-  background-color: #111827; /* Tailwind gray-900 */
-  border-radius: 1rem; /* match rounded-2xl */
+  background-color: var(--color-surface);
+  border-radius: var(--radius-card);
   overflow: hidden;
   --glow-intensity: 0;
   --glow-x: 50%;
   --glow-y: 50%;
-  --glow-color: 236, 72, 153; /* pink-500 */
+  --glow-color: var(--color-accent-rgb); /* brand accent (src/index.css) */
   --glow-radius: 400px;
-  border: 1px solid #1f2937; /* gray-800 */
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--color-ink);
 }
 
 /* Base border glow effect using mask composite */

@@ -1,10 +1,3 @@
-import {
-  Code,
-  Shield,
-  Smartphone,
-  type LucideIcon,
-} from 'lucide-react';
-
 export type SectionId =
   | 'home'
   | 'about'
@@ -25,12 +18,12 @@ export const SECTIONS: SectionId[] = [
 export const SOCIAL_LINKS = {
   github: 'https://github.com/Themazecrawler',
   linkedin: 'https://www.linkedin.com/in/lisa-amimo-7a9518225/',
-  email: 'mailto:amimmolisa23@gmail.com',
+  email: 'mailto:amimolisa23@gmail.com',
   phone: 'tel:+254111508242',
 } as const;
 
 export const CONTACT_INFO = {
-  email: 'amimmolisa23@gmail.com',
+  email: 'amimolisa23@gmail.com',
   phone: '+254 111 508 242',
 } as const;
 
@@ -43,6 +36,11 @@ export type Project = {
   image: string;
 };
 
+// NOTE: `image` fields below are placeholders (picsum, seeded per project so
+// they're at least stable and don't repeat) standing in for the previous
+// random, unrelated Pexels stock photos. Swap these for real product
+// screenshots as soon as you have them — that's the single highest-impact
+// fix for this section's credibility.
 export const PROJECTS: Project[] = [
   {
     title: 'StimaSense',
@@ -51,8 +49,7 @@ export const PROJECTS: Project[] = [
     tech: ['Dart', 'Flutter', 'Material Design', 'Real-time APIs'],
     github: SOCIAL_LINKS.github,
     live: '#',
-    image:
-      'https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?auto=compress&cs=tinysrgb&w=500',
+    image: 'https://picsum.photos/seed/stimasense-power-app/600/450',
   },
   {
     title: 'AI Rapid Response',
@@ -61,38 +58,34 @@ export const PROJECTS: Project[] = [
     tech: ['AI/ML', 'React Native', 'Python', 'Emergency APIs'],
     github: SOCIAL_LINKS.github,
     live: '#',
-    image:
-      'https://images.pexels.com/photos/6238297/pexels-photo-6238297.jpeg?auto=compress&cs=tinysrgb&w=500',
+    image: 'https://picsum.photos/seed/ai-rapid-response-app/600/450',
   },
   {
     title: 'Bloom',
     description:
       'A dating app built by and for Black users centered on connection, safety, and real representation in love and community.',
-    tech: ['Dart', 'Supabase', 'FLutter', 'Socket.io'],
+    tech: ['Dart', 'Supabase', 'Flutter', 'Socket.io'],
     github: SOCIAL_LINKS.github,
     live: '#',
-    image:
-      'https://images.pexels.com/photos/6962024/pexels-photo-6962024.jpeg?auto=compress&cs=tinysrgb&w=500',
+    image: 'https://picsum.photos/seed/bloom-dating-app/600/450',
   },
   {
     title: 'WalletIO',
     description:
-      'modern Web3 crypto wallet appt hat gives users a clear, real-time view of their digital assets.',
+      'A modern Web3 crypto wallet app that gives users a clear, real-time view of their digital assets.',
     tech: ['React Native', 'Web3.js', 'Ethereum', 'Tailwind'],
     github: SOCIAL_LINKS.github,
     live: '#',
-    image:
-      'https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=500',
+    image: 'https://picsum.photos/seed/walletio-crypto-app/600/450',
   },
   {
     title: 'Hora',
     description:
-      'A cross-platform menstrual cycle tracking application , featuring seasonal themed UI, privacy-first onboarding, cycle predictions, symptom tracking, and wellness insights.',
+      'A cross-platform menstrual cycle tracking application featuring seasonally themed UI, privacy-first onboarding, cycle predictions, symptom tracking, and wellness insights.',
     tech: ['Flutter', 'Dart', 'Node.js', 'PostgreSQL'],
     github: SOCIAL_LINKS.github,
     live: '#',
-    image:
-      'https://images.pexels.com/photos/6801874/pexels-photo-6801874.jpeg?auto=compress&cs=tinysrgb&w=500',
+    image: 'https://picsum.photos/seed/hora-cycle-app/600/450',
   },
   {
     title: 'SACE',
@@ -101,54 +94,40 @@ export const PROJECTS: Project[] = [
     tech: ['React', 'Python', 'TensorFlow', 'FastAPI'],
     github: SOCIAL_LINKS.github,
     live: '#',
-    image:
-      'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=500',
+    image: 'https://picsum.photos/seed/sace-style-ai/600/450',
   },
   {
     title: 'HMS',
     description:
-      'a hotel management system platform that is highly customizable.',
+      'A hotel management system platform that is highly customizable.',
     tech: ['React', 'Node.js', 'Express', 'MongoDB'],
     github: SOCIAL_LINKS.github,
     live: '#',
-    image:
-      'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=500',
+    image: 'https://picsum.photos/seed/hms-hotel-system/600/450',
   },
 ];
 
-export type SkillCategory = {
-  icon: LucideIcon;
+
+export type Skill = {
   title: string;
   description: string;
-  technologies: string[];
 };
 
-export const SKILLS: SkillCategory[] = [
+export const SKILLS: Skill[] = [
   {
-    icon: Code,
-    title: 'Fullstack Development',
+    title: 'Mobile development',
     description:
-      'Building end-to-end web applications with modern frameworks and best practices.',
-    technologies: ['React', 'Node.js', 'Python', 'PostgreSQL', 'MongoDB'],
+      'Building responsive, high-performance mobile applications for Android and iOS with a focus on intuitive user experiences.',
   },
   {
-    icon: Smartphone,
-    title: 'Mobile Development',
+    title: 'Frontend development',
     description:
-      'Creating native and cross-platform mobile applications for iOS and Android.',
-    technologies: ['React Native', 'Flutter', 'Swift', 'Kotlin'],
+      'Creating modern, interactive user interfaces that are visually appealing, responsive, and optimized for usability.',
   },
   {
-    icon: Shield,
-    title: 'Cybersecurity',
+    title: 'Web development',
     description:
-      'Implementing security measures, conducting audits, and protecting digital assets.',
-    technologies: [
-      'Penetration Testing',
-      'SIEM',
-      'Vulnerability Assessment',
-      'Compliance',
-    ],
+      'Developing fast, scalable websites and web applications using modern technologies and best practices.',
   },
 ];
 

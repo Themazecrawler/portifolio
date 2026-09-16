@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import iconUrl from '../../assets/heart.svg';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
 
@@ -41,6 +42,7 @@ function catmullRomPath(pts: Point[]): string {
 export function ScrollPath({ children }: ScrollPathProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLImageElement>(null);
+  const reducedMotion = useReducedMotion();
   const [points, setPoints] = useState<Point[]>([]);
   const [dims, setDims] = useState({ w: 0, h: 0 });
   const [copied, setCopied] = useState(false);
@@ -133,7 +135,7 @@ export function ScrollPath({ children }: ScrollPathProps) {
 
   // GSAP animation — only active when MAPPING_MODE = false
   useEffect(() => {
-    if (MAPPING_MODE) return;
+    if (MAPPING_MODE || reducedMotion) return;
     const icon = iconRef.current;
     const wrapper = wrapperRef.current;
     if (!icon || !wrapper) return;
@@ -170,7 +172,7 @@ export function ScrollPath({ children }: ScrollPathProps) {
       });
     });
     return () => ctx.revert();
-  }, []);
+  }, [reducedMotion]);
 
   const curvePath = catmullRomPath(points);
 
@@ -201,7 +203,7 @@ export function ScrollPath({ children }: ScrollPathProps) {
               <path
                 d={curvePath}
                 fill="none"
-                stroke="#EC4899"
+                stroke="var(--color-accent)"
                 strokeWidth={2}
                 strokeDasharray="8 4"
                 opacity={0.8}
@@ -215,7 +217,7 @@ export function ScrollPath({ children }: ScrollPathProps) {
                 {/* Large invisible hit zone */}
                 <circle cx={p.x} cy={p.y} r={HIT_RADIUS} fill="transparent" style={{ cursor: 'grab' }} />
                 {/* Visible dot */}
-                <circle cx={p.x} cy={p.y} r={10} fill="#EC4899" opacity={0.95} pointerEvents="none" />
+                <circle cx={p.x} cy={p.y} r={10} fill="var(--color-accent)" opacity={0.95} pointerEvents="none" />
                 {/* Number */}
                 <text
                   x={p.x} y={p.y + 4}
@@ -231,7 +233,7 @@ export function ScrollPath({ children }: ScrollPathProps) {
                 {/* Coords label */}
                 <text
                   x={p.x + 16} y={p.y - 14}
-                  fill="#EC4899"
+                  fill="var(--color-accent)"
                   fontSize={10}
                   fontFamily="monospace"
                   pointerEvents="none"
@@ -244,12 +246,12 @@ export function ScrollPath({ children }: ScrollPathProps) {
 
           {/* HUD bar */}
           <div
-            className="fixed bottom-6 left-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border border-pink-500/40 text-sm font-mono select-none"
+            className="fixed bottom-6 left-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border border-[rgba(var(--color-accent-rgb),0.4)] text-sm font-mono select-none"
             style={{
               transform: 'translateX(-50%)',
               background: 'rgba(0,0,0,0.85)',
               backdropFilter: 'blur(8px)',
-              color: '#f9a8d4',
+              color: 'var(--color-accent-soft)',
               pointerEvents: 'auto',
             }}
           >
@@ -260,14 +262,14 @@ export function ScrollPath({ children }: ScrollPathProps) {
             <button
               onClick={copyPath}
               className="ml-1 px-3 py-1 rounded-lg text-white text-xs font-bold"
-              style={{ background: copied ? '#16a34a' : '#EC4899' }}
+              style={{ background: copied ? '#16a34a' : 'var(--color-accent)' }}
             >
               {copied ? '✓ Copied!' : 'Copy coords'}
             </button>
             <button
               onClick={() => setPoints([])}
               className="px-3 py-1 rounded-lg text-xs font-bold"
-              style={{ background: 'rgba(255,255,255,0.1)', color: '#f9a8d4' }}
+              style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--color-accent-soft)' }}
             >
               Clear
             </button>
@@ -282,7 +284,7 @@ export function ScrollPath({ children }: ScrollPathProps) {
           alt=""
           width={128}
           height={128}
-          className="absolute top-0 left-0 pointer-events-none z-20"
+          className="absolute top-0 left-0 pointer-events-none z-0 opacity-90"
         />
       )}
     </div>

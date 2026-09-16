@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 import './ProfileCard.css';
 
 interface ProfileCardProps {
@@ -23,7 +24,7 @@ interface ProfileCardProps {
   onContactClick?: () => void;
 }
 
-const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(236,72,153,0.18) 0%, rgba(0,0,0,0.85) 100%)';
+const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(var(--color-accent-rgb),0.18) 0%, rgba(0,0,0,0.85) 100%)';
 
 const ANIMATION_CONFIG = {
   INITIAL_DURATION: 1200,
@@ -64,8 +65,10 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   const enterTimerRef = useRef<number | null>(null);
   const leaveRafRef = useRef<number | null>(null);
 
+  const reducedMotion = useReducedMotion();
+
   const tiltEngine = useMemo(() => {
-    if (!enableTilt) return null;
+    if (!enableTilt || reducedMotion) return null;
     let rafId: number | null = null;
     let running = false;
     let lastTs = 0;
@@ -109,7 +112,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
       currentY += (targetY - currentY) * k;
       setVarsFromXY(currentX, currentY);
       const stillFar = Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05;
-      if (stillFar || document.hasFocus()) {
+      if (stillFar) {
         rafId = requestAnimationFrame(step);
       } else {
         running = false;
@@ -140,7 +143,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
         rafId = null; running = false; lastTs = 0;
       }
     };
-  }, [enableTilt]);
+  }, [enableTilt, reducedMotion]);
 
   const getOffsets = (evt: PointerEvent, el: HTMLElement) => {
     const rect = el.getBoundingClientRect();
@@ -206,9 +209,11 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
     shell.addEventListener('pointerleave', pl);
     const handleClick = () => {
       if (!enableMobileTilt || location.protocol !== 'https:') return;
-      const anyMotion = window.DeviceMotionEvent as any;
-      if (anyMotion && typeof anyMotion.requestPermission === 'function') {
-        anyMotion.requestPermission().then((state: string) => {
+      const deviceMotion = window.DeviceMotionEvent as (typeof DeviceMotionEvent & {
+        requestPermission?: () => Promise<string>;
+      }) | undefined;
+      if (deviceMotion?.requestPermission) {
+        deviceMotion.requestPermission().then((state: string) => {
           if (state === 'granted') window.addEventListener('deviceorientation', do_);
         }).catch(console.error);
       } else {
@@ -259,7 +264,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
     '--icon': paddedIcon ? `url(${paddedIcon})` : 'none',
     '--grain': grainUrl ? `url(${grainUrl})` : 'none',
     '--inner-gradient': innerGradient ?? DEFAULT_INNER_GRADIENT,
-    '--behind-glow-color': behindGlowColor ?? 'rgba(236, 72, 153, 0.55)',
+    '--behind-glow-color': behindGlowColor ?? 'rgba(var(--color-accent-rgb), 0.55)',
     '--behind-glow-size': behindGlowSize ?? '50%'
   }) as React.CSSProperties, [paddedIcon, grainUrl, innerGradient, behindGlowColor, behindGlowSize]);
 

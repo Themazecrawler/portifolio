@@ -12,7 +12,7 @@ import {
 
 function App() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-bg">
       <Navigation />
 
       <main>
