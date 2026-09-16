@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Lisa Amimo — Portfolio
 
 Personal portfolio site: home, about, skills, projects, experience, and contact
@@ -44,9 +43,3 @@ npm run lint       # eslint
 
 No environment variables or API keys are required. The contact form opens
 the visitor's email client via a `mailto:` link rather than calling a backend.
-=======
-
-1. Install dependencies:
-   `npm install`
-
->>>>>>> 4c3f1dbc545d9b11dd2de83c72f84a96683c6f50
