@@ -70,8 +70,13 @@ export function Footer() {
           <div className="font-pixel text-lg text-accent mb-4">
             LISA.AMIMO
           </div>
+<<<<<<< HEAD
           <p className="text-text-muted mb-6">
             Computer Science Graduate &bull; Fullstack Developer &bull; Cybersecurity Enthusiast
+=======
+          <p className="text-gray-400 mb-6">
+            Computer Science Graduate &bull; Fullstack Developer &bull; Code Enthusiast
+>>>>>>> 4c3f1dbc545d9b11dd2de83c72f84a96683c6f50
           </p>
           <div className="flex justify-center gap-4 mb-8">
             <a
